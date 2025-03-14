@@ -1,0 +1,43 @@
+#!/bin/bash
+
+if [ "$#" -ne 2 ];
+then
+    echo "Incorrect Input: Use ./backups.sh mod_date backup_dirs"
+    exit 1
+fi
+
+mod_date="$1"
+backup_dirs="$2"
+
+if [ $(date -d "$1" "+%Y-%m-%d" &>/dev/null; echo $?) -ne 0 ];
+then
+    echo "Error: Invalid mod_date format. Please use YYYY-MM-DD."
+    exit 1
+fi
+
+if [ ! -f "$backup_dirs" -eq 0 ];
+then
+    echo "Error: The file $backup_dirs does not exists."
+    exit 1
+fi
+
+directories(cat "$backups_dirs")
+
+invalid_dir=0
+for dir in $directories;
+do
+    if [ -d "$dir" -eq 0 ];
+    then
+	echo "Error:directory $dir does not exist"
+	invalid_dir=1
+    fi
+done
+
+if [ $invalid_dir -eq 1 ];
+then
+    exit 1
+fi
+
+curr_date=$(date "+%Y-%m-%d")
+
+backup_filename="${mod_date}_TO_${curr_date}_backups.tgz"
